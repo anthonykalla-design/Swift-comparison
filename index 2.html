@@ -2206,6 +2206,9 @@ async function captureScreenshot(){
     return;
   }
   const target = document.querySelector("main") || document.body;
+  const rect = target.getBoundingClientRect();
+  const captureWidth = Math.ceil(Math.max(rect.width, target.scrollWidth));
+  const captureHeight = Math.ceil(Math.max(rect.height, target.scrollHeight));
   const prior = els.copyBtn.textContent;
   els.copyBtn.textContent = "Saving...";
   try{
@@ -2213,9 +2216,17 @@ async function captureScreenshot(){
       useCORS:true,
       backgroundColor:null,
       scale:2,
+      width: captureWidth,
+      height: captureHeight,
+      windowWidth: captureWidth,
+      windowHeight: captureHeight,
+      scrollX: 0,
+      scrollY: 0,
       onclone: (doc)=>{
         doc.body.classList.add("snapshot-mode");
         const snapRoot = doc.querySelector("main") || doc.body;
+        snapRoot.style.width = `${captureWidth}px`;
+        snapRoot.style.height = `${captureHeight}px`;
         snapRoot.querySelectorAll("input").forEach((input)=>{
           const div = doc.createElement("div");
           div.className = "snapshot-input";
