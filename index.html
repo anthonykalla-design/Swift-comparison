@@ -1,0 +1,2276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Swift Home Loans — Comparison Tool</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0b0f19" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <style>
+    :root{
+      --bg:#f5f9ff;
+      --panel:#f0f6ff;
+      --panel2:#e9f2ff;
+      --card:#f7fbff;
+      --line:rgba(15,23,42,.12);
+      --text:#0f172a;
+      --muted:rgba(15,23,42,.65);
+      --muted2:rgba(15,23,42,.5);
+      --accent:#6fb7ff;
+      --accent2:#a6d8ff;
+
+      --goodBg: rgba(111,183,255,.18);
+      --midBg: rgba(251,191,36,.14);
+      --badBg: rgba(248,113,113,.14);
+
+      --goodBd: rgba(111,183,255,.4);
+      --midBd: rgba(251,191,36,.28);
+      --badBd: rgba(248,113,113,.28);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(111,183,255,.35), transparent 55%),
+        radial-gradient(900px 600px at 85% 20%, rgba(166,216,255,.35), transparent 55%),
+        linear-gradient(180deg, #f7fbff, #eef5ff 45%, #e9f2ff);
+      color:var(--text);
+    }
+
+    .wrap{
+      height:100%;
+      padding:18px 18px 14px;
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      gap:14px;
+      max-width:1400px;
+      margin:0 auto;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      min-width:320px;
+    }
+    .logo{
+      width:68px;height:68px;border-radius:18px;
+      background-color:#e1efff;
+      background-image:url("Logo.png"), url("logo.png");
+      background-position:center;
+      background-size:contain;
+      background-repeat:no-repeat;
+      border:1px solid var(--line);
+      box-shadow: 0 14px 26px rgba(15,23,42,.14);
+    }
+    .brand h1{
+      font-size:16px;
+      margin:0;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .brand .sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .meta{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .pill{
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(15,23,42,.04);
+      border:1px solid var(--line);
+    }
+    .btn{
+      cursor:pointer;
+      user-select:none;
+      border:1px solid var(--line);
+      background: rgba(15,23,42,.04);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:10px;
+      font-weight:600;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn:hover{ background: rgba(15,23,42,.08); }
+    .btn.btn-mini{
+      padding:6px 8px;
+      font-size:11px;
+      border-radius:10px;
+      width:100%;
+      justify-content:center;
+    }
+    .btn.btn-mini.active{
+      background: rgba(111,183,255,.25);
+      border-color: rgba(111,183,255,.6);
+      color:#1f2937;
+    }
+
+    .toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(15,23,42,.04);
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .toggle input{
+      width:14px;
+      height:14px;
+      padding:0;
+      margin:0;
+      border-radius:4px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.7);
+      accent-color: var(--accent2);
+    }
+    .toggle input:focus{ box-shadow:none; border-color: rgba(96,165,250,.45); }
+    .toggle span{ color:var(--text); }
+
+    main{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:14px;
+      min-height:0;
+    }
+
+    .panel{
+      background: rgba(247,251,255,.9);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: 0 20px 50px rgba(15,23,42,.12);
+      overflow:hidden;
+      min-height:0;
+    }
+    .panel .hd{
+      padding:14px 14px 10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,23,42,.03), transparent);
+    }
+    .panel .hd .title{
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size:13px;
+    }
+    .panel .hd .note{
+      font-size:12px;
+      color:var(--muted);
+      max-width:520px;
+      text-align:right;
+    }
+
+    .grid{
+      padding:12px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      min-height:0;
+    }
+    .grid.two-col{ grid-template-columns:repeat(2,1fr); }
+
+    .is-hidden{ display:none !important; }
+
+    .card{
+      background: rgba(255,255,255,.9);
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+    }
+    .card .ch{
+      padding:10px 10px 8px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .tag{
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.25px;
+    }
+    .tag.current{color:rgba(255,255,255,.9);}
+    .tag.opt1{color:rgba(110,231,183,.9);}
+    .tag.opt2{color:rgba(96,165,250,.9);}
+    .small{font-size:11px;color:var(--muted);}
+
+    .form{
+      padding:10px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    label{
+      font-size:11px;
+      color:var(--muted);
+    }
+    input{
+      width:100%;
+      padding:9px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      color:var(--text);
+      outline:none;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .snapshot-input{
+      width:100%;
+      padding:9px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      color:var(--text);
+      font-weight:700;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      min-height:36px;
+    }
+    input:focus{
+      border-color: rgba(96,165,250,.45);
+      box-shadow:0 0 0 3px rgba(96,165,250,.12);
+    }
+    .span2{grid-column:1 / span 2;}
+
+    .metrics{
+      padding:10px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      border-top:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,23,42,.04), transparent);
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:9px 10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: rgba(15,23,42,.02);
+    }
+    .row .k{
+      font-size:11px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .row .v{
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.2px;
+      text-align:right;
+      min-width:120px;
+    }
+    .row .v span{ display:block; }
+    .row .v .v-sub{
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.2px;
+      color:var(--muted2);
+      margin-top:2px;
+    }
+    .row.winner-pay{
+      position:relative;
+      border-color: rgba(110,231,183,.9);
+      background: linear-gradient(90deg, rgba(110,231,183,.32), rgba(96,165,250,.12));
+      box-shadow:
+        0 0 0 1px rgba(110,231,183,.55),
+        0 16px 36px rgba(110,231,183,.28),
+        0 0 26px rgba(110,231,183,.25);
+      transform: translateY(-1px);
+    }
+    .row.winner-pay .k{
+      color: rgba(110,231,183,.95);
+    }
+    .row.winner-pay .v{
+      color:#1f2937;
+      font-size:13px;
+    }
+    .row.winner-pay .v .v-sub{
+      color:#1f2937;
+    }
+    .row[data-metric="payment"][data-loan="o1"] .v,
+    .row[data-metric="payment"][data-loan="o2"] .v{
+      color:#1f2937;
+    }
+    .heat.good{background:var(--goodBg);border-color:var(--goodBd);}
+    .heat.mid{background:var(--midBg);border-color:var(--midBd);}
+    .heat.bad{background:var(--badBg);border-color:var(--badBd);}
+
+    .right{
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:12px;
+      padding:60px 12px 12px;
+      min-height:0;
+    }
+
+    .winner{
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(111,183,255,.4);
+      overflow:hidden;
+      background:
+        radial-gradient(600px 260px at 0% 0%, rgba(111,183,255,.18), transparent 60%),
+        radial-gradient(500px 240px at 100% 100%, rgba(166,216,255,.16), transparent 60%),
+        rgba(255,255,255,.95);
+      box-shadow: 0 24px 60px rgba(15,23,42,.12), 0 0 0 1px rgba(111,183,255,.18);
+    }
+    .winner::after{
+      content:"";
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:4px;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      opacity:.9;
+      pointer-events:none;
+    }
+    .winner .wt{
+      padding:12px 12px 10px;
+      border-bottom:1px solid var(--line);
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.25px;
+      color:var(--text);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      position:relative;
+      z-index:1;
+    }
+    .winner .wt .small{ color: rgba(15,23,42,.7); }
+    .winner-left{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .winner-title{
+      text-transform:uppercase;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.4px;
+      color:#1f2937;
+    }
+    .winner-badge{
+      align-self:flex-start;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      background: rgba(111,183,255,.2);
+      border:1px solid rgba(111,183,255,.5);
+      color: rgba(47,128,237,.95);
+    }
+    .winner .wv{
+      padding:14px 12px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+    .winner .wv .big{
+      font-size:20px;
+      font-weight:1000;
+      letter-spacing:.2px;
+      color:#1f2937;
+      text-shadow:none;
+    }
+    .winner-name{
+      color:#1f2937;
+      text-transform:uppercase;
+      letter-spacing:.35px;
+    }
+    .winner-amt{
+      color:#1f2937;
+    }
+    .winner .wv .sub{
+      font-size:12px;
+      color:#1f2937;
+      font-weight:700;
+    }
+
+    .box{
+      border-radius:18px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.92);
+      overflow:hidden;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+    }
+    .box .bh{
+      padding:12px 12px 10px;
+      border-bottom:1px solid var(--line);
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.25px;
+      color:#1f2937;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .box .bb{
+      padding:12px;
+      color:#1f2937;
+      font-size:12px;
+      line-height:1.35;
+      white-space:pre-line;
+    }
+    .snapshot-mode main .panel .hd{display:none;}
+    .snapshot-mode main .panel{padding-top:12px;}
+    .snapshot-mode .right{padding-top:12px;}
+    .hint{
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    footer{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      color:var(--muted2);
+      font-size:11px;
+    }
+    .links{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    
+    .modal{
+      position:fixed;
+      inset:0;
+      background: rgba(15,23,42,.2);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal.open{ display:flex; }
+    .modal-card{
+      width:min(1400px, 98vw);
+      max-height:90vh;
+      background: rgba(255,255,255,.98);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: 0 24px 80px rgba(15,23,42,.2);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+    .modal-hd{
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), transparent);
+    }
+    .modal-title{ font-weight:900; font-size:13px; letter-spacing:.25px; }
+    .modal-actions{ display:flex; align-items:center; gap:8px; }
+    .select{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 8px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background: rgba(15,23,42,.04);
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .select select{
+      background: transparent;
+      color: var(--text);
+      border:none;
+      outline:none;
+      font-weight:700;
+      font-size:12px;
+    }
+    .select select option{
+      background: #f7fbff;
+      color: #0f172a;
+    }
+    .modal-tabs{
+      display:flex;
+      gap:8px;
+      padding:10px 12px 0;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background: rgba(15,23,42,.04);
+      color:var(--text);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .tab.active{
+      background: rgba(111,183,255,.25);
+      border-color: rgba(111,183,255,.6);
+    }
+    .modal-body{
+      padding:12px;
+      overflow:auto;
+    }
+    .amort-note{
+      color: var(--muted);
+      font-size:11px;
+      margin-bottom:6px;
+      display:none;
+    }
+    .amort-status{
+      color: var(--muted);
+      font-size:12px;
+      margin-bottom:8px;
+    }
+    .amort-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(340px,1fr));
+      gap:12px;
+    }
+    .amort-col{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      background: rgba(15,23,42,.02);
+      min-width: 340px;
+      overflow-x:auto;
+    }
+    .amort-col-title{
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+      margin-bottom:6px;
+    }
+    .amort-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+    .amort-table th,
+    .amort-table td{
+      padding:8px 10px;
+      border-bottom:1px solid var(--line);
+      text-align:right;
+      white-space:nowrap;
+    }
+    .amort-table th:first-child,
+    .amort-table td:first-child{
+      text-align:left;
+    }
+@media (max-width:1100px){
+      .amort-grid{grid-template-columns:1fr;}
+      .right{padding-top:12px;}
+      .wrap{height:auto;}
+      main{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Swift Home Loans — Client Comparison</h1>
+          <div class="sub">Current Loan vs Option 1 vs Option 2 • on-screen dashboard</div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="pill" id="asOf"></div>
+        <label class="toggle">
+          <input type="checkbox" id="toggleOpt2" />
+          <span>Show Option 2</span>
+        </label>
+        <button class="btn" id="resetBtn">↺ Reset</button>
+        <button class="btn" id="amortBtn">Amortization</button>
+        <button class="btn" id="copyBtn">Save snapshot</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- LEFT PANEL -->
+      <section class="panel">
+        <div class="hd">
+          <div class="title">Inputs (fill these) → Everything updates instantly</div>
+          <div class="note">
+            Rates can be entered as <b>6.25</b> or <b>0.0625</b>. Closing costs are “rolled in” as higher loan amount.
+          </div>
+        </div>
+
+        <div class="grid" id="inputGrid">
+          <!-- CURRENT LOAN -->
+          <div class="card" id="cardCurrent">
+            <div class="ch">
+              <div class="tag current">Current Loan</div>
+              <div class="small">baseline</div>
+            </div>
+
+            <div class="form">
+              <div class="field span2">
+                <label>Loan Amount (original)</label>
+                <input id="c_amt" type="number" step="100" />
+              </div>
+              <div class="field">
+                <label>Rate (%)</label>
+                <input id="c_rate" type="number" step="0.01" />
+              </div>
+              <div class="field">
+                <label>Term (years)</label>
+                <input id="c_term" type="number" step="1" />
+              </div>
+              <div class="field span2">
+                <label>Months Already Paid</label>
+                <input id="c_paidMonths" type="number" step="1" />
+              </div>
+              <div class="field span2">
+                <label>Monthly debts to be paid off with cash-out</label>
+                <input id="c_debts" type="number" step="10" />
+              </div>
+            </div>
+
+            <div class="metrics">
+              <div class="row heat" data-metric="payment" data-loan="c">
+                <div class="k">Monthly P&amp;I</div><div class="v" id="c_pmt">—</div>
+              </div>
+              <div class="row heat" data-metric="balance" data-loan="c">
+                <div class="k">Est. Current Balance</div><div class="v" id="c_bal">—</div>
+              </div>
+              <div class="row heat" data-metric="int5" data-loan="c">
+                <div class="k">Interest Paid (5 yrs)</div><div class="v" id="c_int5">—</div>
+              </div>
+              <div class="row heat" data-metric="int10" data-loan="c">
+                <div class="k">Interest Paid (10 yrs)</div><div class="v" id="c_int10">-</div>
+              </div>
+              <div class="row" data-metric="totInt" data-loan="c">
+                <div class="k">Total Interest (life)</div><div class="v" id="c_totInt">-</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OPTION 1 -->
+          <div class="card" id="cardOpt1">
+            <div class="ch">
+              <div class="tag opt1">Option 1</div>
+              <div class="small">proposal</div>
+            </div>
+
+            <div class="form">
+              <div class="field span2">
+                <label>New Loan Amount (incl. costs &amp; cash-out)</label>
+                <input id="o1_amt" type="number" step="100" />
+              </div>
+              <div class="field">
+                <label>Rate (%)</label>
+                <input id="o1_rate" type="number" step="0.01" />
+              </div>
+              <div class="field">
+                <label>Term (years)</label>
+                <input id="o1_term" type="number" step="1" />
+              </div>
+              <div class="field span2">
+                <label>Cash-out to client (included in loan)</label>
+                <input id="o1_cash" type="number" step="100" />
+              </div>
+              <div class="field span2">
+                <label>Skipped Payments Credit (months)</label>
+                <input id="skipMonths" type="number" step="1" />
+              </div>
+              <div class="field span2">
+                <label>Accelerate payoff</label>
+                <button type="button" class="btn btn-mini" id="o1_payNowBtn">Pay what you pay now</button>
+              </div>
+            </div>
+
+            <div class="metrics">
+              <div class="row heat" data-metric="payment" data-loan="o1">
+                <div class="k">Monthly P&amp;I</div>
+                <div class="v">
+                  <span id="o1_pmt">-</span>
+                  <span class="v-sub" id="o1_pmt_diff">-</span>
+                </div>
+              </div>
+              <div class="row" data-metric="payoff" data-loan="o1">
+                <div class="k">Payoff faster (pay current + debts)</div><div class="v" id="o1_fast">-</div>
+              </div>
+              <div class="row heat" data-metric="totInt" data-loan="o1">
+                <div class="k">Total Interest Change (life)</div><div class="v" id="o1_totInt">-</div>
+              </div>
+              <div class="row heat" data-metric="int5" data-loan="o1">
+                <div class="k">Interest Change (5 yrs)</div><div class="v" id="o1_int5">-</div>
+              </div>
+              <div class="row heat" data-metric="int10" data-loan="o1">
+                <div class="k">Interest Change (10 yrs)</div><div class="v" id="o1_int10">-</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OPTION 2 -->
+          <div class="card" id="cardOpt2">
+            <div class="ch">
+              <div class="tag opt2">Option 2</div>
+              <div class="small">proposal</div>
+            </div>
+
+            <div class="form">
+              <div class="field span2">
+                <label>New Loan Amount (incl. costs &amp; cash-out)</label>
+                <input id="o2_amt" type="number" step="100" />
+              </div>
+              <div class="field">
+                <label>Rate (%)</label>
+                <input id="o2_rate" type="number" step="0.01" />
+              </div>
+              <div class="field">
+                <label>Term (years)</label>
+                <input id="o2_term" type="number" step="1" />
+              </div>
+              <div class="field span2">
+                <label>Cash-out to client (included in loan)</label>
+                <input id="o2_cash" type="number" step="100" />
+              </div>
+              <div class="field span2">
+                <label>Accelerate payoff</label>
+                <button type="button" class="btn btn-mini" id="o2_payNowBtn">Pay what you pay now</button>
+              </div>
+              <div class="field span2">
+                <label class="hint">Tip: closing costs ≈ new loan amount − current balance − cash-out.</label>
+                <div></div>
+              </div>
+            </div>
+
+            <div class="metrics">
+              <div class="row heat" data-metric="payment" data-loan="o2">
+                <div class="k">Monthly P&amp;I</div>
+                <div class="v">
+                  <span id="o2_pmt">-</span>
+                  <span class="v-sub" id="o2_pmt_diff">-</span>
+                </div>
+              </div>
+              <div class="row" data-metric="payoff" data-loan="o2">
+                <div class="k">Payoff faster (pay current + debts)</div><div class="v" id="o2_fast">-</div>
+              </div>
+              <div class="row heat" data-metric="totInt" data-loan="o2">
+                <div class="k">Total Interest Change (life)</div><div class="v" id="o2_totInt">-</div>
+              </div>
+              <div class="row heat" data-metric="int5" data-loan="o2">
+                <div class="k">Interest Change (5 yrs)</div><div class="v" id="o2_int5">-</div>
+              </div>
+              <div class="row heat" data-metric="int10" data-loan="o2">
+                <div class="k">Interest Change (10 yrs)</div><div class="v" id="o2_int10">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL -->
+      <aside class="panel">
+        <div class="right">
+          <div class="winner">
+            <div class="wt">
+              <div class="winner-left">
+                <div class="winner-badge">Recommended</div>
+                <div class="winner-title">Winner (12-month value)</div>
+              </div>
+              <div class="small" id="winnerSub">Includes skipped payments & debt payoff</div>
+            </div>
+            <div class="wv">
+              <div>
+                <div class="big winner-name" id="winnerName">-</div>
+                <div class="sub" id="winnerExplain">—</div>
+              </div>
+              <div style="text-align:right">
+                <div class="big winner-amt" id="winnerAmt">-</div>
+                <div class="sub" id="winnerBreakeven">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="box" id="whyO1">
+            <div class="bh">
+              <div>Why Option 1</div>
+              <div class="small" id="whyO1Tag">—</div>
+            </div>
+            <div class="bb" id="whyO1Text">—</div>
+          </div>
+
+          <div class="box" id="whyO2">
+            <div class="bh">
+              <div>Why Option 2</div>
+              <div class="small" id="whyO2Tag">—</div>
+            </div>
+            <div class="bb" id="whyO2Text">—</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div>Swift Home Loans • Internal tool (client-friendly output) • P&amp;I only (excludes taxes/insurance)</div>
+      <div class="links">
+        <span class="pill">Press Save snapshot to download an image</span>
+      </div>
+    </footer>
+  </div>
+
+
+  <div class="modal" id="amortModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="amortTitle">
+      <div class="modal-hd">
+        <div class="modal-title" id="amortTitle">Amortization Schedule</div>
+        <div class="modal-actions">
+          <label class="select">
+            <span>Period</span>
+            <select id="amortPeriod">
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </label>
+          <button class="btn" id="amortClose">Close</button>
+        </div>
+      </div>
+            <div class="modal-body">
+        <div class="amort-status" id="amortStatus">Fill in the numbers first.</div>
+        <div class="amort-grid">
+          <div class="amort-col">
+            <div class="amort-col-title">Current</div>
+            <div class="amort-note" id="amortNoteCurrent"></div>
+            <table class="amort-table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Payment</th>
+                  <th>Principal</th>
+                  <th>Interest</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody id="amortTableCurrent"></tbody>
+            </table>
+          </div>
+          <div class="amort-col">
+            <div class="amort-col-title">Option 1</div>
+            <div class="amort-note" id="amortNoteO1"></div>
+            <table class="amort-table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Payment</th>
+                  <th>Principal</th>
+                  <th>Interest</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody id="amortTableO1"></tbody>
+            </table>
+          </div>
+          <div class="amort-col" id="amortColO2">
+            <div class="amort-col-title">Option 2</div>
+            <div class="amort-note" id="amortNoteO2"></div>
+            <table class="amort-table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Payment</th>
+                  <th>Principal</th>
+                  <th>Interest</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody id="amortTableO2"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+        
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+/* ---------------------------
+   API helpers
+----------------------------*/
+
+const useLocalCalc = window.location.protocol === "file:";
+
+function normRate(rateInput){
+  const r = Number(rateInput || 0);
+  if (!isFinite(r) || r <= 0) return 0;
+  return (r > 1) ? (r/100) : r;
+}
+
+function pmt(ratePerMonth, nper, pv){
+  if (nper <= 0 || pv <= 0) return 0;
+  if (ratePerMonth === 0) return pv / nper;
+  const r = ratePerMonth;
+  return (r * pv) / (1 - Math.pow(1 + r, -nper));
+}
+
+function amortMonth(pv, rateM, payment){
+  const interest = pv * rateM;
+  const principal = Math.max(0, payment - interest);
+  const balance = Math.max(0, pv - principal);
+  return {interest, principal, balance};
+}
+
+function amortSummary(pv, annualRateDec, termYears, monthsPaid=0){
+  const nper = Math.round(termYears * 12);
+  const rateM = annualRateDec / 12;
+  const payment = pmt(rateM, nper, pv);
+
+  const clampPaid = Math.min(Math.max(0, Math.round(monthsPaid || 0)), nper);
+
+  let bal = pv;
+  let intPaid = 0;
+
+  for (let m = 1; m <= clampPaid; m++){
+    const step = amortMonth(bal, rateM, payment);
+    bal = step.balance;
+    intPaid += step.interest;
+    if (bal <= 0) break;
+  }
+
+  const snap = (months)=>{
+    const k = Math.min(months, nper);
+    let b = pv;
+    let i = 0;
+    for (let m = 1; m <= k; m++){
+      const s = amortMonth(b, rateM, payment);
+      b = s.balance;
+      i += s.interest;
+      if (b <= 0) break;
+    }
+    return {interest: i, balance: b};
+  };
+
+  const s5 = snap(60);
+  const s10 = snap(120);
+
+  const totPaid = payment * nper;
+  const totInt = Math.max(0, totPaid - pv);
+
+  return {
+    pv,
+    annualRateDec,
+    termYears,
+    nper,
+    rateM,
+    payment,
+    monthsPaid: clampPaid,
+    balance: bal,
+    snap5: s5,
+    snap10: s10,
+    totalInterest: totInt
+  };
+}
+
+function amortizeWithPayment(pv, annualRateDec, payment, monthsLimit){
+  if (!(pv > 0) || !(payment > 0)) return null;
+  const rateM = annualRateDec / 12;
+  let bal = pv;
+  let interest = 0;
+  let m = 0;
+  const limit = Math.max(1, Math.round(monthsLimit || 0));
+
+  if (rateM === 0){
+    const months = Math.min(limit, Math.ceil(bal / payment));
+    bal = Math.max(0, bal - (payment * months));
+    return {interest: 0, months, balance: bal};
+  }
+
+  const interestOnly = bal * rateM;
+  if (payment <= interestOnly) return null;
+
+  while (bal > 0 && m < limit){
+    const step = amortMonth(bal, rateM, payment);
+    interest += step.interest;
+    bal = step.balance;
+    m += 1;
+    if (bal <= 0.01){
+      bal = 0;
+      break;
+    }
+  }
+
+  return {interest, months: m, balance: bal};
+}
+
+function money(n, decimals){
+  const v = Number(n || 0);
+  return v.toLocaleString("en-US",{
+    style:"currency",
+    currency:"USD",
+    minimumFractionDigits:decimals || 0,
+    maximumFractionDigits:decimals || 0
+  });
+}
+
+function formatDiff(currentValue, optionValue){
+  if (!isFinite(currentValue) || !isFinite(optionValue)) return "-";
+  const diff = currentValue - optionValue;
+  const abs = Math.abs(diff);
+  if (abs < 0.5) return `${money(0,0)} same vs current`;
+  return `${money(abs,0)} ${diff > 0 ? "less" : "more"} vs current`;
+}
+
+function breakEvenMonths(costRolled, currentPayment, optionPayment, skipMonths, monthlyDebts){
+  const debt = Math.max(0, Number(monthlyDebts || 0));
+  const baseline = currentPayment + debt;
+  const ms = baseline - optionPayment;
+
+  if (ms <= 0) return {months:null, label:"N/A (no monthly savings)"};
+
+  const skipCredit = Math.max(0, skipMonths) * baseline;
+  const effectiveCost = costRolled - skipCredit;
+
+  if (effectiveCost <= 0) return {months:0, label:"Instant (month 0)"};
+
+  const m = Math.round(Math.abs(effectiveCost / ms));
+  return {months:m, label:`${m} months`};
+}
+
+function net12Benefit(costRolled, currentPayment, optionPayment, skipMonths, monthlyDebts){
+  const debt = Math.max(0, Number(monthlyDebts || 0));
+  const baseline = currentPayment + debt;
+  const monthlySavings = baseline - optionPayment;
+  const skipCredit = Math.max(0, skipMonths) * baseline;
+  return (monthlySavings * 12) + skipCredit - costRolled;
+}
+
+function tagFromBreakeven(m){
+  if (m === null) return "Not a payment saver";
+  if (m === 0)     return "Immediate win";
+  if (m <= 36)     return "Good if staying 3+ years";
+  if (m <= 60)     return "Good if staying 5+ years";
+  return "Best if staying long-term";
+}
+
+function formatBreakeven(be, maxMonths){
+  if (!be || be.months === null) return "";
+  if (isFinite(maxMonths) && be.months > maxMonths) return "";
+  return `Break-even: ${be.label}`;
+}
+
+function computeHeat(valuesByLoan){
+  const entries = Object.entries(valuesByLoan)
+    .filter(([, v])=> isFinite(v) && v > 0);
+  if (!entries.length) return {};
+
+  entries.sort((a, b)=> a[1] - b[1]);
+  const min = entries[0][1];
+  const max = entries[entries.length - 1][1];
+  const midCut = min + (max - min) * 0.45;
+
+  const result = {};
+  entries.forEach(([loan, v])=>{
+    if (v === min) result[loan] = "good";
+    else if (v <= midCut) result[loan] = "mid";
+    else result[loan] = "bad";
+  });
+  return result;
+}
+
+function buildSummaryTextLocal(x, c, o1, o2, showOpt2){
+  const lines = [];
+  lines.push("Swift Home Loans - Quick Comparison");
+  lines.push("");
+  lines.push(`Current: ${money(c.payment,0)}/mo | Est. balance ${money(c.balance,0)} | Rate ${(x.c.rate*100).toFixed(2)}% | ${x.c.term} yrs`);
+  if (x.c.debts>0){
+    lines.push(`Other monthly debts to be paid off: ${money(x.c.debts,0)}/mo (included in cash-out logic).`);
+  }
+  if (o1){
+    lines.push(`Option 1: ${money(o1.payment,0)}/mo | Rate ${(x.o1.rate*100).toFixed(2)}% | ${x.o1.term} yrs | Loan ${money(x.o1.amt,0)}${x.o1.cash>0 ? " | Cash-out " + money(x.o1.cash,0) : ""}`);
+  }
+  if (showOpt2 && o2){
+    lines.push(`Option 2: ${money(o2.payment,0)}/mo | Rate ${(x.o2.rate*100).toFixed(2)}% | ${x.o2.term} yrs | Loan ${money(x.o2.amt,0)}${x.o2.cash>0 ? " | Cash-out " + money(x.o2.cash,0) : ""}`);
+  }
+  lines.push("");
+  lines.push(`Assumes ~${x.skipMonths} skipped payment${x.skipMonths===1?"":"s"} credit${x.c.debts>0 ? " and those listed debts paid off" : ""}.`);
+  lines.push("P&I only (excludes taxes/insurance).");
+  return lines.join("\n");
+}
+
+function emptyResponseLocal(showOpt2, skipMonths){
+  return {
+    valid: false,
+    outputs: {
+      current: {pmt:"-", bal:"-", int5:"-", int10:"-", totInt:"-"},
+      option1: {pmt:"-", pmtDiff:"-", totInt:"-", int5:"-", int10:"-"},
+      option2: {pmt:"-", pmtDiff:"-", totInt:"-", int5:"-", int10:"-"}
+    },
+    why: {
+      o1: {text:"Enter Option numbers to see the breakdown.", tag:""},
+      o2: {text:"Enter Option numbers to see the breakdown.", tag:""}
+    },
+    winner: {
+      name:"",
+      amount:"",
+      explain: showOpt2 ? "Enter Option 1 / Option 2 to compare." : "Enter Option 1 to compare.",
+      breakeven:"",
+      sub: `Includes ~${skipMonths} skipped payment${skipMonths===1?"":"s"} and any debts paid off`
+    },
+    heat: {},
+    summaryText: "Fill in the numbers first."
+  };
+}
+
+function localCalc(payload){
+  const showOpt2 = !!payload.showOpt2;
+  const skipMonths = Math.max(0, Math.round(Number(payload.skipMonths || 0)));
+
+  const x = {
+    c: {
+      amt: Number(payload?.c?.amt || 0),
+      rate: normRate(payload?.c?.rate),
+      term: Number(payload?.c?.term || 0),
+      paidMonths: Number(payload?.c?.paidMonths || 0),
+      debts: Number(payload?.c?.debts || 0)
+    },
+    o1: {
+      amt: Number(payload?.o1?.amt || 0),
+      rate: normRate(payload?.o1?.rate),
+      term: Number(payload?.o1?.term || 0),
+      cash: Number(payload?.o1?.cash || 0)
+    },
+    o2: {
+      amt: Number(payload?.o2?.amt || 0),
+      rate: normRate(payload?.o2?.rate),
+      term: Number(payload?.o2?.term || 0),
+      cash: Number(payload?.o2?.cash || 0)
+    },
+    skipMonths
+  };
+
+  if (!(x.c.amt>0 && x.c.term>0 && x.c.rate>0)){
+    return emptyResponseLocal(showOpt2, skipMonths);
+  }
+
+  const c = amortSummary(x.c.amt, x.c.rate, x.c.term, x.c.paidMonths);
+  const o1 = (x.o1.amt>0 && x.o1.term>0 && x.o1.rate>0)
+    ? amortSummary(x.o1.amt, x.o1.rate, x.o1.term, 0)
+    : null;
+  const o2 = (showOpt2 && x.o2.amt>0 && x.o2.term>0 && x.o2.rate>0)
+    ? amortSummary(x.o2.amt, x.o2.rate, x.o2.term, 0)
+    : null;
+
+  const outputs = {
+    current: {
+      pmt: money(c.payment,0),
+      bal: money(c.balance,0),
+      int5: money(c.snap5.interest,0),
+      int10: money(c.snap10.interest,0),
+      totInt: money(c.totalInterest,0)
+    },
+    option1: {
+      pmt: o1 ? money(o1.payment,0) : "-",
+      pmtDiff: o1 ? formatDiff(c.payment, o1.payment) : "-",
+      totInt: o1 ? formatDiff(c.totalInterest, o1.totalInterest) : "-",
+      int5: o1 ? formatDiff(c.snap5.interest, o1.snap5.interest) : "-",
+      int10: o1 ? formatDiff(c.snap10.interest, o1.snap10.interest) : "-"
+    },
+    option2: {
+      pmt: o2 ? money(o2.payment,0) : "-",
+      pmtDiff: o2 ? formatDiff(c.payment, o2.payment) : "-",
+      totInt: o2 ? formatDiff(c.totalInterest, o2.totalInterest) : "-",
+      int5: o2 ? formatDiff(c.snap5.interest, o2.snap5.interest) : "-",
+      int10: o2 ? formatDiff(c.snap10.interest, o2.snap10.interest) : "-"
+    }
+  };
+
+  const winnerSub = `Includes ~${skipMonths} skipped payment${skipMonths===1?"":"s"} and any debts paid off`;
+  const recoupLimitMonths = 36;
+
+  const makeWhy = (opt, optAmt, cashOutRaw, monthlyDebtsRaw)=>{
+    if (!opt){
+      return {
+        text:"Enter Option numbers to see the breakdown.",
+        tag:"",
+        be:null,
+        net12:null,
+        net12Cash:null,
+        costRolled:null,
+        monthlySavings:null,
+        payment:null
+      };
+    }
+
+    const cashOut = Math.max(0, Number(cashOutRaw || 0));
+    const debt    = Math.max(0, Number(monthlyDebtsRaw || 0));
+
+    const grossDiff  = Math.max(0, optAmt - c.balance);
+    const costRolled = Math.max(0, grossDiff - cashOut);
+
+    const baseline = c.payment + debt;
+    const monthlySavings = baseline - opt.payment;
+    const skipCredit = Math.max(0, skipMonths) * baseline;
+    const effectiveCost = Math.max(0, costRolled - skipCredit);
+
+    const be   = breakEvenMonths(effectiveCost, c.payment, opt.payment, 0, debt);
+    const net12= net12Benefit(effectiveCost, c.payment, opt.payment, 0, debt);
+    const net12Cash = (monthlySavings * 12) + skipCredit;
+    const tag  = tagFromBreakeven(be.months);
+
+    const lines = [];
+    lines.push("Here's the simple way to think about it:");
+    lines.push(`- You'd roll about ${money(costRolled,0)} into the loan for costs.`);
+    if (skipCredit > 0){
+      lines.push(`Note: Skipped payment credit is about ${money(skipCredit,0)}, so net costs are about ${money(effectiveCost,0)}.`);
+    }
+    if (cashOut > 0){
+      lines.push(`- You'd also receive about ${money(cashOut,0)} in cash-out (not counted as a cost here).`);
+    }
+    if (debt > 0){
+      lines.push(`- You're wiping out about ${money(debt,0)}/mo in other debts with this cash-out.`);
+    }
+    if (debt > 0){
+      lines.push(`- Old setup (mortgage + those debts) runs about ${money(baseline,0)}/mo.`);
+    } else {
+      lines.push(`- Current mortgage payment is about ${money(c.payment,0)}/mo.`);
+    }
+    lines.push(`- New mortgage payment is ${money(opt.payment,0)}/mo.`);
+    lines.push(`- Total monthly cash-flow change is about ${money(monthlySavings,0)}/mo.`);
+    lines.push(`- Break-even is ${be.label}.`);
+    if (isFinite(net12) && net12 >= 0){
+      lines.push(`- In the first year, you're ahead about: ${money(net12,0)}.`);
+    }
+
+    return {text:lines.join("\n"), tag, be, net12, net12Cash, costRolled, monthlySavings, payment: opt.payment};
+  };
+
+  const why1 = makeWhy(o1, x.o1.amt, x.o1.cash, x.c.debts);
+  const why2 = makeWhy(o2, x.o2.amt, x.o2.cash, x.c.debts);
+
+  const candidates = [];
+  if (o1) candidates.push({name:"Option 1", net12:why1.net12Cash, be:why1.be});
+  if (o2) candidates.push({name:"Option 2", net12:why2.net12Cash, be:why2.be});
+
+  const winnerFromCandidate = (candidate, explainText)=>{
+    const amt = money(candidate.net12,0);
+    return {
+      name: candidate.name,
+      amount: `${candidate.net12>=0?"+":""}${amt}`,
+      explain: explainText,
+      breakeven: formatBreakeven(candidate.be, recoupLimitMonths),
+      sub: winnerSub
+    };
+  };
+
+  let winner = {
+    name:"",
+    amount:"",
+    explain: showOpt2 ? "Enter Option 1 / Option 2 to compare." : "Enter Option 1 to compare.",
+    breakeven:"",
+    sub: winnerSub
+  };
+
+  let best = null;
+  let second = null;
+  if (candidates.length){
+    candidates.sort((a,b)=>(b.net12 ?? -1e18) - (a.net12 ?? -1e18));
+    best = candidates[0];
+    second = candidates[1];
+
+    if (second && Math.round(best.net12) === Math.round(second.net12)){
+      winner = {
+        name:"Tie",
+        amount: money(best.net12,0),
+        explain:"Both options are about the same in year 1 after debt payoff.",
+        breakeven:"",
+        sub: winnerSub
+      };
+    } else {
+      winner = winnerFromCandidate(
+        best,
+        `In year 1, ${best.name} comes out ahead including debt payoff and skipped payments.`
+      );
+    }
+  }
+
+  if (o1 && o2 && winner.name !== "Tie"){
+    const cost1 = why1.costRolled;
+    const cost2 = why2.costRolled;
+    const pay1 = o1.payment;
+    const pay2 = o2.payment;
+
+    if (isFinite(cost1) && isFinite(cost2) && isFinite(pay1) && isFinite(pay2)){
+      let higherName = null;
+      let lowerName = null;
+      if (cost1 > cost2){
+        higherName = "Option 1";
+        lowerName = "Option 2";
+      } else if (cost2 > cost1){
+        higherName = "Option 2";
+        lowerName = "Option 1";
+      }
+
+      if (higherName && winner.name === higherName){
+        const higherCost = higherName === "Option 1" ? cost1 : cost2;
+        const lowerCost = higherName === "Option 1" ? cost2 : cost1;
+        const higherPayment = higherName === "Option 1" ? pay1 : pay2;
+        const lowerPayment = higherName === "Option 1" ? pay2 : pay1;
+
+        const costDiff = Math.max(0, higherCost - lowerCost);
+        const savingsDiff = lowerPayment - higherPayment;
+        const recoupMonths = savingsDiff > 0 ? Math.ceil(costDiff / savingsDiff) : null;
+
+        if (!recoupMonths || recoupMonths > recoupLimitMonths){
+          const chosen = lowerName === "Option 1"
+            ? {name:"Option 1", net12: why1.net12Cash, be: why1.be}
+            : {name:"Option 2", net12: why2.net12Cash, be: why2.be};
+          const explainText = !recoupMonths
+            ? `${lowerName} wins because ${higherName} does not pay back its extra cost with monthly savings.`
+            : `${lowerName} wins because ${higherName} takes ${recoupMonths} months to recoup the extra cost.`;
+          winner = winnerFromCandidate(chosen, explainText);
+        }
+      }
+    }
+  }
+
+  const heat = {
+    payment: computeHeat({c:c.payment, o1:o1?.payment, o2:o2?.payment}),
+    int5: computeHeat({c:c.snap5.interest, o1:o1?.snap5.interest, o2:o2?.snap5.interest}),
+    int10: computeHeat({c:c.snap10.interest, o1:o1?.snap10.interest, o2:o2?.snap10.interest}),
+    totInt: computeHeat({o1:o1?.totalInterest, o2:o2?.totalInterest})
+  };
+
+  return {
+    valid: true,
+    outputs,
+    why: {
+      o1: {text: why1.text, tag: why1.tag},
+      o2: {text: why2.text, tag: why2.tag}
+    },
+    winner,
+    heat,
+    summaryText: buildSummaryTextLocal(x, c, o1, o2, showOpt2)
+  };
+}
+
+function amortSummaryLocal(pv, annualRateDec, termYears, monthsPaid){
+  const nper = Math.round(termYears * 12);
+  const rateM = annualRateDec / 12;
+  const payment = pmt(rateM, nper, pv);
+
+  const clampPaid = Math.min(Math.max(0, Math.round(monthsPaid || 0)), nper);
+  let bal = pv;
+
+  for (let m = 1; m <= clampPaid; m++){
+    const step = amortMonth(bal, rateM, payment);
+    bal = step.balance;
+    if (bal <= 0) break;
+  }
+
+  return {
+    pv,
+    termYears,
+    nper,
+    rateM,
+    payment,
+    monthsPaid: clampPaid,
+    balance: bal
+  };
+}
+
+function buildScheduleLocal(balance, rateM, payment, months, period){
+  const rows = [];
+  let totalInterest = 0;
+  if (!(months > 0)) return {rows, totalInterest};
+
+  if (period === "yearly"){
+    let year = 1;
+    let sumPay = 0;
+    let sumP = 0;
+    let sumI = 0;
+    for (let m = 1; m <= months; m++){
+      const step = amortMonth(balance, rateM, payment);
+      balance = step.balance;
+      sumPay += payment;
+      sumP += step.principal;
+      sumI += step.interest;
+      totalInterest += step.interest;
+      if (m % 12 === 0 || m === months){
+        rows.push({
+          label: `Year ${year}`,
+          payment: money(sumPay, 0),
+          principal: money(sumP, 0),
+          interest: money(sumI, 0),
+          balance: money(balance, 0)
+        });
+        year += 1;
+        sumPay = 0;
+        sumP = 0;
+        sumI = 0;
+      }
+    }
+    return {rows, totalInterest};
+  }
+
+  for (let m = 1; m <= months; m++){
+    const step = amortMonth(balance, rateM, payment);
+    balance = step.balance;
+    totalInterest += step.interest;
+    rows.push({
+      label: `Month ${m}`,
+      payment: money(payment, 0),
+      principal: money(step.principal, 0),
+      interest: money(step.interest, 0),
+      balance: money(balance, 0)
+    });
+  }
+
+  return {rows, totalInterest};
+}
+
+function buildLoanScheduleLocal(loan, monthsPaid, period){
+  if (!(loan.amt > 0 && loan.term > 0 && loan.rate > 0)) return null;
+  const rate = normRate(loan.rate);
+  if (!(rate > 0)) return null;
+
+  const summary = amortSummaryLocal(loan.amt, rate, loan.term, monthsPaid);
+  let balance = loan.amt;
+  let months = summary.nper;
+
+  if (monthsPaid > 0){
+    balance = summary.balance;
+    months = Math.max(0, summary.nper - summary.monthsPaid);
+  }
+
+  const schedule = buildScheduleLocal(balance, summary.rateM, summary.payment, months, period);
+
+  return {
+    rows: schedule.rows,
+    note: "",
+    summary: {
+      totalInterest: schedule.totalInterest,
+      payment: summary.payment
+    }
+  };
+}
+
+function localAmortization(payload){
+  const period = (payload.period === "yearly") ? "yearly" : "monthly";
+  const showOpt2 = !!payload.showOpt2;
+
+  const x = {
+    c: {
+      amt: Number(payload?.c?.amt || 0),
+      rate: Number(payload?.c?.rate || 0),
+      term: Number(payload?.c?.term || 0),
+      paidMonths: Number(payload?.c?.paidMonths || 0)
+    },
+    o1: {
+      amt: Number(payload?.o1?.amt || 0),
+      rate: Number(payload?.o1?.rate || 0),
+      term: Number(payload?.o1?.term || 0)
+    },
+    o2: {
+      amt: Number(payload?.o2?.amt || 0),
+      rate: Number(payload?.o2?.rate || 0),
+      term: Number(payload?.o2?.term || 0)
+    }
+  };
+
+  if (!(x.c.amt > 0 && x.c.term > 0 && x.c.rate > 0)){
+    return {valid:false, period, loans:{}};
+  }
+
+  const current = buildLoanScheduleLocal(x.c, x.c.paidMonths, period);
+  const option1 = buildLoanScheduleLocal(x.o1, 0, period);
+  const option2 = showOpt2 ? buildLoanScheduleLocal(x.o2, 0, period) : null;
+
+  return {
+    valid: true,
+    period,
+    loans: {current, option1, option2}
+  };
+}
+
+let renderTimer = null;
+let lastSummaryText = "Fill in the numbers first.";
+let requestId = 0;
+
+/* ---------------------------
+   UI hooks
+----------------------------*/
+
+const els = {
+  asOf: document.getElementById("asOf"),
+  resetBtn: document.getElementById("resetBtn"),
+  copyBtn: document.getElementById("copyBtn"),
+  toggleOpt2: document.getElementById("toggleOpt2"),
+  cardOpt2: document.getElementById("cardOpt2"),
+  whyO2: document.getElementById("whyO2"),
+  inputGrid: document.getElementById("inputGrid"),
+
+  c_amt: document.getElementById("c_amt"),
+  c_rate: document.getElementById("c_rate"),
+  c_term: document.getElementById("c_term"),
+  c_paidMonths: document.getElementById("c_paidMonths"),
+  c_debts: document.getElementById("c_debts"),
+
+  o1_amt: document.getElementById("o1_amt"),
+  o1_rate: document.getElementById("o1_rate"),
+  o1_term: document.getElementById("o1_term"),
+  o1_cash: document.getElementById("o1_cash"),
+
+  o2_amt: document.getElementById("o2_amt"),
+  o2_rate: document.getElementById("o2_rate"),
+  o2_term: document.getElementById("o2_term"),
+  o2_cash: document.getElementById("o2_cash"),
+
+  skipMonths: document.getElementById("skipMonths"),
+
+  c_pmt: document.getElementById("c_pmt"),
+  c_bal: document.getElementById("c_bal"),
+  c_int5: document.getElementById("c_int5"),
+  c_int10: document.getElementById("c_int10"),
+  c_totInt: document.getElementById("c_totInt"),
+
+  o1_pmt: document.getElementById("o1_pmt"),
+  o1_pmt_diff: document.getElementById("o1_pmt_diff"),
+  o1_fast: document.getElementById("o1_fast"),
+  o1_payNowBtn: document.getElementById("o1_payNowBtn"),
+  o1_totInt: document.getElementById("o1_totInt"),
+  o1_int5: document.getElementById("o1_int5"),
+  o1_int10: document.getElementById("o1_int10"),
+
+  o2_pmt: document.getElementById("o2_pmt"),
+  o2_pmt_diff: document.getElementById("o2_pmt_diff"),
+  o2_fast: document.getElementById("o2_fast"),
+  o2_payNowBtn: document.getElementById("o2_payNowBtn"),
+  o2_totInt: document.getElementById("o2_totInt"),
+  o2_int5: document.getElementById("o2_int5"),
+  o2_int10: document.getElementById("o2_int10"),
+
+  winnerName: document.getElementById("winnerName"),
+  winnerAmt: document.getElementById("winnerAmt"),
+  winnerExplain: document.getElementById("winnerExplain"),
+  winnerBreakeven: document.getElementById("winnerBreakeven"),
+  winnerSub: document.getElementById("winnerSub"),
+
+  whyO1Text: document.getElementById("whyO1Text"),
+  whyO2Text: document.getElementById("whyO2Text"),
+  whyO1Tag: document.getElementById("whyO1Tag"),
+  whyO2Tag: document.getElementById("whyO2Tag"),
+    amortBtn: document.getElementById("amortBtn"),
+  amortModal: document.getElementById("amortModal"),
+  amortClose: document.getElementById("amortClose"),
+  amortPeriod: document.getElementById("amortPeriod"),
+  amortStatus: document.getElementById("amortStatus"),
+  amortTableCurrent: document.getElementById("amortTableCurrent"),
+  amortTableO1: document.getElementById("amortTableO1"),
+  amortTableO2: document.getElementById("amortTableO2"),
+  amortNoteCurrent: document.getElementById("amortNoteCurrent"),
+  amortNoteO1: document.getElementById("amortNoteO1"),
+  amortNoteO2: document.getElementById("amortNoteO2"),
+  amortColO2: document.getElementById("amortColO2"),
+};
+
+let showOpt2 = false;
+let amortOpen = false;
+let amortPeriod = "monthly";
+let amortData = null;
+let amortNeedsRefresh = false;
+let amortRequestId = 0;
+let payNow = {o1:false, o2:false};
+
+function setOption2Visibility(){
+  showOpt2 = !!(els.toggleOpt2 && els.toggleOpt2.checked);
+  if (els.cardOpt2) els.cardOpt2.classList.toggle("is-hidden", !showOpt2);
+  if (els.whyO2) els.whyO2.classList.toggle("is-hidden", !showOpt2);
+  if (els.inputGrid) els.inputGrid.classList.toggle("two-col", !showOpt2);
+  if (els.amortColO2) els.amortColO2.classList.toggle("is-hidden", !showOpt2);
+}
+
+function setNow(){
+  const d = new Date();
+  els.asOf.textContent = `As of ${d.toLocaleDateString(undefined,{
+    month:"short",day:"numeric",year:"numeric"
+  })}`;
+}
+
+function getInputs(){
+  return {
+    c: {
+      amt: Number(els.c_amt.value),
+      rate: Number(els.c_rate.value),
+      term: Number(els.c_term.value),
+      paidMonths: Number(els.c_paidMonths.value),
+      debts: Number(els.c_debts.value)
+    },
+    o1: {
+      amt: Number(els.o1_amt.value),
+      rate: Number(els.o1_rate.value),
+      term: Number(els.o1_term.value),
+      cash: Number(els.o1_cash.value)
+    },
+    o2: {
+      amt: Number(els.o2_amt.value),
+      rate: Number(els.o2_rate.value),
+      term: Number(els.o2_term.value),
+      cash: Number(els.o2_cash.value)
+    },
+    skipMonths: Math.max(0, Math.round(Number(els.skipMonths.value || 0)))
+  };
+}
+
+
+
+function clearAmortization(message){
+  const tables = [els.amortTableCurrent, els.amortTableO1, els.amortTableO2];
+  const notes = [els.amortNoteCurrent, els.amortNoteO1, els.amortNoteO2];
+  tables.forEach((t)=>{ if (t) t.textContent = ""; });
+  notes.forEach((n)=>{ if (n) n.textContent = ""; });
+  if (els.amortStatus) els.amortStatus.textContent = message || "Fill in the numbers first.";
+}
+
+function renderLoanTable(loan, tbody, noteEl, emptyMessage){
+  if (!tbody) return;
+  tbody.textContent = "";
+  if (!loan || !loan.rows || !loan.rows.length){
+    if (noteEl) noteEl.textContent = emptyMessage || "No schedule for this option.";
+    return;
+  }
+  if (noteEl) noteEl.textContent = loan.note || "";
+  loan.rows.forEach((row)=>{
+    const tr = document.createElement("tr");
+    ["label","payment","principal","interest","balance"].forEach((key)=>{
+      const td = document.createElement("td");
+      td.textContent = row[key];
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function renderAmortTables(){
+  if (!amortData || !amortData.loans){
+    clearAmortization();
+    return;
+  }
+  if (els.amortStatus) els.amortStatus.textContent = "";
+  renderLoanTable(amortData.loans.current, els.amortTableCurrent, els.amortNoteCurrent, "Enter current loan numbers to see the schedule.");
+  renderLoanTable(amortData.loans.option1, els.amortTableO1, els.amortNoteO1, "Enter Option 1 numbers to see the schedule.");
+  renderLoanTable(showOpt2 ? amortData.loans.option2 : null, els.amortTableO2, els.amortNoteO2, showOpt2 ? "Enter Option 2 numbers to see the schedule." : "");
+}
+
+async function fetchAmortization(){
+  const x = getInputs();
+  showOpt2 = !!(els.toggleOpt2 && els.toggleOpt2.checked);
+  if (!(x.c.amt>0 && x.c.term>0 && x.c.rate>0)){
+    clearAmortization();
+    return;
+  }
+
+  const payload = {
+    c: x.c,
+    o1: x.o1,
+    o2: x.o2,
+    skipMonths: x.skipMonths,
+    showOpt2: showOpt2,
+    period: amortPeriod
+  };
+
+  if (useLocalCalc){
+    if (els.amortStatus) els.amortStatus.textContent = "Loading...";
+    const data = localAmortization(payload);
+    if (!data || !data.valid){
+      clearAmortization("Unable to load schedule.");
+      return;
+    }
+    amortData = data;
+    renderAmortTables();
+    return;
+  }
+
+  const currentRequest = ++amortRequestId;
+  if (els.amortStatus) els.amortStatus.textContent = "Loading...";
+  try{
+    const res = await fetch("/api/amortization", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (currentRequest !== amortRequestId) return;
+    if (!res.ok || !data || !data.valid){
+      clearAmortization("Unable to load schedule.");
+      return;
+    }
+    amortData = data;
+    renderAmortTables();
+  }catch(e){
+    clearAmortization("Unable to load schedule.");
+  }
+}
+
+function openAmortization(){
+  amortOpen = true;
+  amortNeedsRefresh = true;
+  if (els.amortModal) els.amortModal.classList.add("open");
+  fetchAmortization();
+}
+
+function closeAmortization(){
+  amortOpen = false;
+  if (els.amortModal) els.amortModal.classList.remove("open");
+}
+function applyHeatFromServer(heatMap){
+  document.querySelectorAll(".row.heat").forEach((row)=>{
+    row.classList.remove("good","mid","bad");
+    const metric = row.getAttribute("data-metric");
+    const loan = row.getAttribute("data-loan");
+    const cls = heatMap?.[metric]?.[loan];
+    if (cls) row.classList.add(cls);
+  });
+}
+
+function highlightWinnerPayment(name){
+  document.querySelectorAll(".row[data-metric='payment']").forEach((row)=>{
+    row.classList.remove("winner-pay");
+  });
+  let loanKey = null;
+  if (name === "Option 1") loanKey = "o1";
+  if (name === "Option 2") loanKey = "o2";
+  if (!loanKey) return;
+  const row = document.querySelector(`.row[data-metric="payment"][data-loan="${loanKey}"]`);
+  if (row) row.classList.add("winner-pay");
+}
+
+function calcPayoffMonths(pv, annualRateDec, payment){
+  if (!(pv > 0) || !(payment > 0)) return null;
+  const rateM = annualRateDec / 12;
+  if (rateM === 0) return Math.ceil(pv / payment);
+  const interestOnly = pv * rateM;
+  if (payment <= interestOnly) return null;
+  const n = Math.log(payment / (payment - rateM * pv)) / Math.log(1 + rateM);
+  if (!isFinite(n)) return null;
+  return Math.ceil(n);
+}
+
+function formatTerm(months){
+  const m = Math.max(0, Math.round(months || 0));
+  const yrs = Math.floor(m / 12);
+  const mos = m % 12;
+  const yLabel = yrs === 1 ? "yr" : "yrs";
+  const mLabel = mos === 1 ? "mo" : "mos";
+  if (yrs > 0 && mos > 0) return `${yrs} ${yLabel} ${mos} ${mLabel}`;
+  if (yrs > 0) return `${yrs} ${yLabel}`;
+  return `${mos} ${mLabel}`;
+}
+
+function updatePayoffDisplays(){
+  const x = getInputs();
+  const currentRate = normRate(x.c.rate);
+  const currentPmt = pmt(currentRate / 12, Math.round(x.c.term * 12), x.c.amt);
+  const debt = Math.max(0, Number(x.c.debts || 0));
+  const baselinePmt = currentPmt + debt;
+
+  function updateOption(key, loan, el, enabled){
+    if (!el) return;
+    if (!enabled){
+      el.textContent = "-";
+      return;
+    }
+    if (!(x.c.amt > 0 && x.c.term > 0 && currentRate > 0) || !(baselinePmt > 0)){
+      el.textContent = "Enter current loan first";
+      return;
+    }
+    if (!(loan.amt > 0 && loan.term > 0 && loan.rate > 0)){
+      el.textContent = "Enter option numbers";
+      return;
+    }
+    const oRate = normRate(loan.rate);
+    const oPmt = pmt(oRate / 12, Math.round(loan.term * 12), loan.amt);
+    if (!(oPmt > 0)){
+      el.textContent = "Enter option numbers";
+      return;
+    }
+    const extra = baselinePmt - oPmt;
+    if (extra <= 0){
+      el.textContent = "No payment savings vs current";
+      return;
+    }
+    const payoffMonths = calcPayoffMonths(loan.amt, oRate, baselinePmt);
+    if (!payoffMonths){
+      el.textContent = "Payment too low to amortize";
+      return;
+    }
+    const saved = Math.max(0, Math.round(loan.term * 12) - payoffMonths);
+    if (saved <= 0){
+      el.textContent = "No payoff time saved";
+      return;
+    }
+    el.textContent = `${formatTerm(saved)} faster`;
+  }
+
+  updateOption("o1", x.o1, els.o1_fast, payNow.o1);
+  updateOption("o2", x.o2, els.o2_fast, payNow.o2 && showOpt2);
+}
+
+function applyPayNowOverrides(){
+  const x = getInputs();
+  const currentRate = normRate(x.c.rate);
+  const currentPmt = pmt(currentRate / 12, Math.round(x.c.term * 12), x.c.amt);
+  const debt = Math.max(0, Number(x.c.debts || 0));
+  const baselinePmt = currentPmt + debt;
+
+  if (!(x.c.amt > 0 && x.c.term > 0 && currentRate > 0) || !(baselinePmt > 0)){
+    return;
+  }
+
+  const c = amortSummary(x.c.amt, currentRate, x.c.term, x.c.paidMonths);
+
+  function apply(loan, elsTot, els5, els10, enabled){
+    if (!enabled) return;
+    if (!(loan.amt > 0 && loan.term > 0 && loan.rate > 0)) return;
+
+    const oRate = normRate(loan.rate);
+    const oPmt = pmt(oRate / 12, Math.round(loan.term * 12), loan.amt);
+    if (!(oPmt > 0)) return;
+    if (baselinePmt <= oPmt) return;
+
+    const total = amortizeWithPayment(loan.amt, oRate, baselinePmt, Math.round(loan.term * 12));
+    const int5 = amortizeWithPayment(loan.amt, oRate, baselinePmt, 60);
+    const int10 = amortizeWithPayment(loan.amt, oRate, baselinePmt, 120);
+    if (!total || !int5 || !int10) return;
+
+    elsTot.textContent = formatDiff(c.totalInterest, total.interest);
+    els5.textContent = formatDiff(c.snap5.interest, int5.interest);
+    els10.textContent = formatDiff(c.snap10.interest, int10.interest);
+  }
+
+  apply(x.o1, els.o1_totInt, els.o1_int5, els.o1_int10, payNow.o1);
+  apply(x.o2, els.o2_totInt, els.o2_int5, els.o2_int10, payNow.o2 && showOpt2);
+}
+
+function setPayNowState(key, on){
+  payNow[key] = !!on;
+  const btn = key === "o1" ? els.o1_payNowBtn : els.o2_payNowBtn;
+  if (btn){
+    btn.classList.toggle("active", payNow[key]);
+    btn.textContent = payNow[key] ? "Using current payment" : "Pay what you pay now";
+  }
+  updatePayoffDisplays();
+  scheduleRender();
+}
+
+function clearOutputs(){
+  const blank = "-";
+  els.c_pmt.textContent = blank;
+  els.c_bal.textContent = blank;
+  els.c_int5.textContent = blank;
+  els.c_int10.textContent = blank;
+  els.c_totInt.textContent = blank;
+
+  els.o1_pmt.textContent = blank;
+  els.o1_pmt_diff.textContent = blank;
+  els.o1_fast.textContent = blank;
+  els.o1_totInt.textContent = blank;
+  els.o1_int5.textContent = blank;
+  els.o1_int10.textContent = blank;
+
+  els.o2_pmt.textContent = blank;
+  els.o2_pmt_diff.textContent = blank;
+  els.o2_fast.textContent = blank;
+  els.o2_totInt.textContent = blank;
+  els.o2_int5.textContent = blank;
+  els.o2_int10.textContent = blank;
+
+  els.whyO1Text.textContent = "Enter Option numbers to see the breakdown.";
+  els.whyO2Text.textContent = "Enter Option numbers to see the breakdown.";
+  els.whyO1Tag.textContent = "";
+  els.whyO2Tag.textContent = "";
+
+  els.winnerName.textContent = "";
+  els.winnerAmt.textContent = "";
+  els.winnerExplain.textContent = showOpt2
+    ? "Enter Option 1 / Option 2 to compare."
+    : "Enter Option 1 to compare.";
+  els.winnerBreakeven.textContent = "";
+  const skipMonths = Math.max(0, Math.round(Number(els.skipMonths.value || 0)));
+  els.winnerSub.textContent = "Includes ~" + skipMonths + " skipped payment" + (skipMonths===1 ? "" : "s") + " and any debts paid off";
+
+  applyHeatFromServer({});
+  highlightWinnerPayment("");
+  updatePayoffDisplays();
+  applyPayNowOverrides();
+}
+
+function updateUI(data){
+  const out = data.outputs;
+  els.c_pmt.textContent = out.current.pmt;
+  els.c_bal.textContent = out.current.bal;
+  els.c_int5.textContent = out.current.int5;
+  els.c_int10.textContent = out.current.int10;
+  els.c_totInt.textContent = out.current.totInt;
+
+  els.o1_pmt.textContent = out.option1.pmt;
+  els.o1_pmt_diff.textContent = out.option1.pmtDiff;
+  els.o1_totInt.textContent = out.option1.totInt;
+  els.o1_int5.textContent = out.option1.int5;
+  els.o1_int10.textContent = out.option1.int10;
+
+  els.o2_pmt.textContent = out.option2.pmt;
+  els.o2_pmt_diff.textContent = out.option2.pmtDiff;
+  els.o2_totInt.textContent = out.option2.totInt;
+  els.o2_int5.textContent = out.option2.int5;
+  els.o2_int10.textContent = out.option2.int10;
+
+  els.whyO1Text.textContent = data.why.o1.text;
+  els.whyO2Text.textContent = data.why.o2.text;
+  els.whyO1Tag.textContent = data.why.o1.tag;
+  els.whyO2Tag.textContent = data.why.o2.tag;
+
+  els.winnerName.textContent = data.winner.name;
+  els.winnerAmt.textContent = data.winner.amount;
+  els.winnerExplain.textContent = data.winner.explain;
+  els.winnerBreakeven.textContent = data.winner.breakeven;
+  els.winnerSub.textContent = data.winner.sub;
+
+  applyHeatFromServer(data.heat || {});
+  highlightWinnerPayment(data.winner.name);
+  updatePayoffDisplays();
+  applyPayNowOverrides();
+  lastSummaryText = data.summaryText || lastSummaryText;
+}
+
+function scheduleRender(){
+  amortNeedsRefresh = true;
+  if (renderTimer) clearTimeout(renderTimer);
+  renderTimer = setTimeout(render, 150);
+}
+
+async function render(){
+  const x = getInputs();
+  showOpt2 = !!(els.toggleOpt2 && els.toggleOpt2.checked);
+
+  if (!(x.c.amt>0 && x.c.term>0 && x.c.rate>0)){
+    lastSummaryText = "Fill in the numbers first.";
+    clearOutputs();
+    if (amortOpen) clearAmortization();
+    return;
+  }
+
+  const payload = {
+    c: x.c,
+    o1: x.o1,
+    o2: x.o2,
+    skipMonths: x.skipMonths,
+    showOpt2: showOpt2
+  };
+
+  if (useLocalCalc){
+    const data = localCalc(payload);
+    if (!data || !data.valid){
+      lastSummaryText = data && data.summaryText ? data.summaryText : "Fill in the numbers first.";
+      clearOutputs();
+      return;
+    }
+    updateUI(data);
+    if (amortOpen && amortNeedsRefresh){
+      amortNeedsRefresh = false;
+      fetchAmortization();
+    }
+    return;
+  }
+
+  const currentRequest = ++requestId;
+  try{
+    const res = await fetch("/api/calc", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (currentRequest !== requestId) return;
+    if (!res.ok || !data || !data.valid){
+      lastSummaryText = data && data.summaryText ? data.summaryText : "Fill in the numbers first.";
+      clearOutputs();
+      return;
+    }
+    updateUI(data);
+    if (amortOpen && amortNeedsRefresh){
+      amortNeedsRefresh = false;
+      fetchAmortization();
+    }
+  }catch(e){
+    clearOutputs();
+  }
+}
+
+function resetToSample(){
+  els.c_amt.value         = 0;
+  els.c_rate.value        = 0;
+  els.c_term.value        = 0;
+  els.c_paidMonths.value  = 0;
+  els.c_debts.value       = 0;
+
+  els.o1_amt.value        = 0;
+  els.o1_rate.value       = 0;
+  els.o1_term.value       = 0;
+  els.o1_cash.value       = 0;
+
+  els.o2_amt.value        = 0;
+  els.o2_rate.value       = 0;
+  els.o2_term.value       = 0;
+  els.o2_cash.value       = 0;
+
+  els.skipMonths.value    = 0;
+
+  setPayNowState("o1", false);
+  setPayNowState("o2", false);
+
+  scheduleRender();
+}
+
+// 🔹 Helper: normalize term if user typed months (e.g. 240 → 20 yrs)
+function attachTermNormalizer(el){
+  if (!el) return;
+  el.addEventListener("blur", ()=>{
+    const raw = Number(el.value);
+    if (!isFinite(raw) || raw <= 0) return;
+
+    // If they typed something that looks like months (e.g. 180, 240, 360),
+    // treat as months and convert to years.
+    if (raw >= 60){
+      const yrsRaw = raw / 12;
+      const rounded = Math.round(yrsRaw * 100) / 100;   // keep up to 2 decimals
+      const finalVal =
+        Math.abs(rounded - Math.round(rounded)) < 1e-6
+          ? Math.round(rounded)
+          : rounded;
+      el.value = finalVal;
+      scheduleRender();
+    }
+  });
+}
+
+function bind(){
+  const inputs = document.querySelectorAll("input");
+  inputs.forEach((i)=> {
+    i.addEventListener("input", scheduleRender);
+    i.addEventListener("focus", ()=>{
+      if (i.value.trim() !== "" && Number(i.value) === 0){
+        i.value = "";
+      }
+    });
+  });
+
+  // Attach month→year normalization to all term fields
+  attachTermNormalizer(els.c_term);
+  attachTermNormalizer(els.o1_term);
+  attachTermNormalizer(els.o2_term);
+
+  els.resetBtn.addEventListener("click", resetToSample);
+
+  if (els.toggleOpt2){
+    els.toggleOpt2.addEventListener("change", ()=>{
+      setOption2Visibility();
+      scheduleRender();
+    });
+  }
+
+  if (els.o1_payNowBtn){
+    els.o1_payNowBtn.addEventListener("click", ()=>{
+      setPayNowState("o1", !payNow.o1);
+    });
+  }
+  if (els.o2_payNowBtn){
+    els.o2_payNowBtn.addEventListener("click", ()=>{
+      setPayNowState("o2", !payNow.o2);
+    });
+  }
+
+  els.copyBtn.addEventListener("click", captureScreenshot);
+
+  if (els.amortBtn){
+    els.amortBtn.addEventListener("click", ()=>{
+      openAmortization();
+    });
+  }
+  if (els.amortClose){
+    els.amortClose.addEventListener("click", closeAmortization);
+  }
+  if (els.amortModal){
+    els.amortModal.addEventListener("click", (e)=>{
+      if (e.target === els.amortModal) closeAmortization();
+    });
+  }
+  document.addEventListener("keydown", (e)=>{
+    if (e.key === "Escape" && amortOpen) closeAmortization();
+  });
+  if (els.amortPeriod){
+    els.amortPeriod.addEventListener("change", ()=>{
+      amortPeriod = (els.amortPeriod.value === "yearly") ? "yearly" : "monthly";
+      fetchAmortization();
+    });
+  }
+}
+
+function buildSummaryText(){
+  return lastSummaryText || "Fill in the numbers first.";
+}
+
+function buildSnapshotName(){
+  const d = new Date();
+  const pad = (n)=> String(n).padStart(2, "0");
+  return `comparison-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.png`;
+}
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+}
+
+function canvasToBlob(canvas){
+  return new Promise((resolve)=>{
+    if (canvas.toBlob){
+      canvas.toBlob((blob)=> resolve(blob), "image/png");
+    } else {
+      resolve(null);
+    }
+  });
+}
+
+async function captureScreenshot(){
+  if (typeof html2canvas !== "function"){
+    alert("Screenshot tool not loaded. Please refresh with internet access.");
+    return;
+  }
+  const target = document.querySelector("main") || document.body;
+  const prior = els.copyBtn.textContent;
+  els.copyBtn.textContent = "Saving...";
+  try{
+    const canvas = await html2canvas(target, {
+      useCORS:true,
+      backgroundColor:null,
+      scale:2,
+      onclone: (doc)=>{
+        doc.body.classList.add("snapshot-mode");
+        const snapRoot = doc.querySelector("main") || doc.body;
+        snapRoot.querySelectorAll("input").forEach((input)=>{
+          const div = doc.createElement("div");
+          div.className = "snapshot-input";
+          div.textContent = input.value || "";
+          input.parentNode.replaceChild(div, input);
+        });
+      }
+    });
+    const name = buildSnapshotName();
+    const blob = await canvasToBlob(canvas);
+    if (blob && navigator.clipboard && window.ClipboardItem){
+      try{
+        await navigator.clipboard.write([new ClipboardItem({"image/png": blob})]);
+        els.copyBtn.textContent = "Copied!";
+        setTimeout(()=> { els.copyBtn.textContent = "Save snapshot"; }, 900);
+        return;
+      }catch(e){
+        // Fall through to download.
+      }
+    }
+    if (blob){
+      downloadBlob(blob, name);
+    } else {
+      const dataUrl = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+    els.copyBtn.textContent = "Saved!";
+    setTimeout(()=> { els.copyBtn.textContent = "Save snapshot"; }, 900);
+  }catch(e){
+    els.copyBtn.textContent = prior;
+    alert("Unable to capture screenshot.");
+  }
+}
+
+if ("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("/sw.js");
+  });
+}
+setNow();
+bind();
+setOption2Visibility();
+resetToSample();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
